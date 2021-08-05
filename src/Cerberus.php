@@ -12,7 +12,7 @@ class Cerberus
     private $reportUri;
     private $allowedOrigins;
 
-    private $headSet = false;
+    private $headersSent = false;
 
     public function __construct(array $whitelists = [], bool $reportOnly = false, bool $allowpost = false, array $features = [])
     {
@@ -22,16 +22,21 @@ class Cerberus
         $this->features = $features;
     }
 
+    public function headersSent()
+    {
+        return $this->headersSent;
+    }
+
     public function setHeads(string $reportUri, array $allowedOrigins = [])
     {
-        if (!$this->headSets) {
+        if (!$this->headersSent) {
             $this->allowedOrigins = $allowedOrigins; // @todo: if empty, should it fallback to at least self origin?
             $this->reportUri = $reportUri;
 
             $this->policies();
-            $this->headSets = true;
+            $this->headersSent = true;
         }
-        return $this->headSets;
+        return $this->headersSent;
     }
 
     private function policies()

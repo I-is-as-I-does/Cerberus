@@ -29,6 +29,9 @@ require_once 'path/to/autoload.php';
 
 $Cerberus = new Cerberus(array $whitelists = [], bool $reportOnly = false, bool $allowpost = false, array $features = []);
 $Cerberus->setHeads(string $reportUri, array $allowedOrigins = []);
+
+# to check if headers sent; returns bool
+$Cerberus->headersSent();
 ```
 
 `setHeads` _must_ be called before any kind of ouput.
