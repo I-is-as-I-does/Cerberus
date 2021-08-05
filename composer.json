@@ -1,0 +1,27 @@
+{
+    "name": "ssitu/cerberus",
+    "description": "A three-headed dog to set headers, and catch security reports, too. Such a good dog.",
+    "type": "library",
+    "keywords" :["php", "headers", "security"],
+    "homepage":"https://github.com/I-is-as-I-does/Cerberus",
+    "license": "MIT",
+    "readme":"README.md",
+    "authors": [
+        {
+            "name": "I-is-as-I-does",
+            "email": "66915011+I-is-as-I-does@users.noreply.github.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+       
+    },
+    "suggest": {
+            "ssitu/blueprints": "To plug in a Psr-3 logger to the optional Catch class."
+    },
+    "autoload": {
+        "psr-4": {
+            "SSITU\\Cerberus\\": "src"
+        }
+    }
+}
