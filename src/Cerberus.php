@@ -1,8 +1,7 @@
 <?php
-/* This file is part of Onement:Cerberus | SSITU | (c) 2021 I-is-as-I-does */
+/* This file is part of Cerberus | SSITU | (c) 2021 I-is-as-I-does */
 namespace SSITU\Cerberus;
 
-//@doc : things that probably are "static" config are set through the constructor; otherwise through the setHeads method
 class Cerberus
 {
     private $whitelists;
@@ -26,7 +25,7 @@ class Cerberus
     public function setHeads(string $reportUri, array $allowedOrigins = [])
     {
         if (!$this->headSets) {
-            $this->allowedOrigins = $allowedOrigins; #@todo: test at least own origin?
+            $this->allowedOrigins = $allowedOrigins; // @todo: if empty, should it fallback to at least self origin?
             $this->reportUri = $reportUri;
 
             $this->policies();
@@ -35,12 +34,9 @@ class Cerberus
         return $this->headSets;
     }
 
-    //@doc: nonce was removed from headers, cause of cached pages; it would be then counterproductive to a have one, if not a security threat.
-    // However, other rules must be quite restrictive, and whitelist of external sources carefully set.
-
     private function policies()
     {
-        header("X-Frame-Options: sameorigin"); //@todo: test if it should be set to allow $http_origin
+        header("X-Frame-Options: sameorigin"); //@todo: should it be set to allow $http_origin?
         header("X-XSS-Protection: 1; mode=block");
         header("X-Content-Type-Options: nosniff");
         header("Strict-Transport-Security: max-age=31536000; includeSubDomains");
@@ -112,7 +108,7 @@ class Cerberus
             "accelerometer" => "none",
             "encrypted-media" => "none",
         ];
-        //@todo: test &$policy as ref
+
         foreach ($policies as $feat => &$policy) {
             if (!empty($this->features[$feat]) && $this->features[$feat] != 'none') {
                 $policy = $this->features[$feat];
