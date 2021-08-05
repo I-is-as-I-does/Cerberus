@@ -1,5 +1,7 @@
 # Cerberus
 
+/!\ TESTS YET TO BE DONE. Not production ready.
+
 A three-headed dog to set headers, and catch security reports, too.
 
 ## Install
