@@ -5,7 +5,7 @@ namespace SSITU\Cerberus;
 class Cerberus
 {
     private $whitelists;
-    private $reportOnly;
+    private $reportonly;
     private $allowpost;
     private $features;
 
@@ -14,10 +14,10 @@ class Cerberus
 
     private $headersSent = false;
 
-    public function __construct(array $whitelists = [], bool $reportOnly = false, bool $allowpost = false, array $features = [])
+    public function __construct(array $whitelists = [], bool $reportonly = false, bool $allowpost = false, array $features = [])
     {
         $this->whitelists = $whitelists;
-        $this->reportOnly = $reportOnly;
+        $this->reportonly = $reportonly;
         $this->allowpost = $allowpost;
         $this->features = $features;
     }
@@ -59,10 +59,25 @@ class Cerberus
     private function onDemandAllowedOrigin()
     {
         $allow = "null";
-        if (!empty($this->allowedOrigins) && !empty($_SERVER['HTTP_ORIGIN']) && in_array($_SERVER['HTTP_ORIGIN'], $this->allowedOrigins)) {
+        if ($this->isAllowedOrigin()) {
             $allow = $_SERVER['HTTP_ORIGIN'];
         }
         return "Access-Control-Allow-Origin: $allow";
+    }
+
+    private function isAllowedOrigin()
+    {
+        if (!empty($this->allowedOrigins) && !empty($_SERVER['HTTP_ORIGIN'])) {
+            if (in_array($_SERVER['HTTP_ORIGIN'], $this->allowedOrigins)) {
+                return true;
+            }
+            foreach($this->allowedOrigins as $origin){
+                if(stripos($origin, '*') !== false && fnmatch($origin, $_SERVER['HTTP_ORIGIN'])){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private function allowMethods()
@@ -79,20 +94,20 @@ class Cerberus
     private function contentSecurity()
     {
         $content = 'Content-Security-Policy';
-        if ($this->reportOnly === true) {
+        if ($this->reportonly === true) {
             $content .= '-Report-Only';
         }
         $content .= ": ";
 
-        $sources = ['script', 'worker', 'connect','style', 'font', 'img', 'media', 'manifest', 'frame', 'object','default'];
+        $sources = ['script', 'worker', 'connect', 'style', 'font', 'img', 'media', 'manifest', 'frame', 'object', 'default'];
         foreach ($sources as $src) {
             $whitelist = '';
             if (!empty($this->whitelists[$src])) {
-                $whitelist = " '".implode("' '", $this->whitelist)."'";
+                $whitelist = " '" . implode("' '", $this->whitelists[$src]) . "'";
             }
-            $content .= "$src-src 'self'$whitelist; ";        
+            $content .= "$src-src 'self'$whitelist; ";
         }
-        $content .= 'report-uri ' . $this->reporturi . ';';
+        $content .= 'report-uri ' . $this->reportUri . ';';
 
         return $content;
     }
@@ -117,14 +132,14 @@ class Cerberus
         foreach ($policies as $feat => &$policy) {
             if (!empty($this->features[$feat]) && $this->features[$feat] != 'none') {
                 $policy = $this->features[$feat];
-                if(is_array($policy)){
-                    $policy = explode(' ',$policy);
-                    foreach($policy as $k=>$v){
-                        if(empty($v) || in_array($v,['*','none'])){
+                if (is_array($policy)) {
+                    $policy = explode(' ', $policy);
+                    foreach ($policy as $k => $v) {
+                        if (empty($v) || in_array($v, ['*', 'none'])) {
                             unset($policy[$k]);
                         }
                     }
-                    $policy = implode("' '",$policy);
+                    $policy = implode("' '", $policy);
                 }
                 if ($policy != '*') {
                     $policy = "'$policy'";

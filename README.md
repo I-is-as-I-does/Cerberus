@@ -98,10 +98,11 @@ $features = [
 $reportUri = 'https://my-own-website.com/report-controller';
 
 # Cross-sites requests allowed origins:
-$allowedOrigins = ['http://friendly-website-that-may-call-my-api.com', 'http://example-two.com'];
+$allowedOrigins = ['http://friendly-website-that-may-call-my-api.com', 'http://example-two.com', 'https://*.cerberus-supports-wildcards.too'];
 ```
 
 About `$allowedOrigins`:
+! New: now supports **wildcards**.
 Cerberus will check if one the trusted origins is requesting something, and if so, will allow it. Otherwise, nada.  
 If you're not exchanging data with external sources, leave it empty.  
 Setting it to `*` (allow all) is not an option here, because that's generally a pretty bad idea.
