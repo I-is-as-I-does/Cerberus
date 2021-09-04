@@ -103,9 +103,9 @@ class Cerberus
         foreach ($sources as $src) {
             $whitelist = '';
             if (!empty($this->whitelists[$src])) {
-                $whitelist = " '" . implode("' '", $this->whitelists[$src]) . "'";
+                $whitelist = implode(" ", $this->whitelists[$src]);
             }
-            $content .= "$src-src 'self'$whitelist; ";
+            $content .= "$src-src 'self' $whitelist; ";
         }
         $content .= 'report-uri ' . $this->reportUri . ';';
 
@@ -116,17 +116,17 @@ class Cerberus
     {
 
         $policies = [
-            "geolocation" => "none",
-            "midi" => "none",
-            "sync-xhr" => "none",
-            "microphone" => "none",
-            "camera" => "none",
-            "magnetometer" => "none",
-            "usb" => "none",
-            "payment" => "none",
-            "gyroscope" => "none",
-            "accelerometer" => "none",
-            "encrypted-media" => "none",
+            "geolocation" => "'none'",
+            "midi" => "'none'",
+            "sync-xhr" => "'none'",
+            "microphone" => "'none'",
+            "camera" => "'none'",
+            "magnetometer" => "'none'",
+            "usb" => "'none'",
+            "payment" => "'none'",
+            "gyroscope" => "'none'",
+            "accelerometer" => "'none'",
+            "encrypted-media" => "'none'",
         ];
 
         foreach ($policies as $feat => &$policy) {
