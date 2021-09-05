@@ -11,6 +11,7 @@ class Cerberus
 
     private $reportUri;
     private $allowedOrigins;
+    private $nonce;
 
     private $headersSent = false;
 
@@ -27,11 +28,12 @@ class Cerberus
         return $this->headersSent;
     }
 
-    public function setHeads(string $reportUri, array $allowedOrigins = [])
+    public function setHeads(string $reportUri, array $allowedOrigins = [], $nonce =null)
     {
         if (!$this->headersSent) {
             $this->allowedOrigins = $allowedOrigins; // @todo: if empty, should it fallback to at least self origin?
             $this->reportUri = $reportUri;
+            $this->nonce = $nonce;
 
             $this->policies();
             $this->headersSent = true;
@@ -98,14 +100,18 @@ class Cerberus
             $content .= '-Report-Only';
         }
         $content .= ": ";
-
+        $nonce = '';
+        if(!empty($this->nonce)){
+            $nonce = 'nonce-'.$this->nonce." ";
+        }
+        
         $sources = ['script', 'worker', 'connect', 'style', 'font', 'img', 'media', 'manifest', 'frame', 'object', 'default'];
         foreach ($sources as $src) {
             $whitelist = '';
             if (!empty($this->whitelists[$src])) {
                 $whitelist = implode(" ", $this->whitelists[$src]);
             }
-            $content .= "$src-src 'self' $whitelist; ";
+            $content .= $src."-src 'self' ".$nonce.$whitelist.";";
         }
         $content .= 'report-uri ' . $this->reportUri . ';';
 
